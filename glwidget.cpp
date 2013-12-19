@@ -15,7 +15,6 @@ GLWidget::GLWidget(QWidget *parent)
     : QGLWidget(parent),
       mClickLocationX(0),//mouseclick
       mClickLocationY(0)
-
 {
     startup();
 }
@@ -45,6 +44,7 @@ void GLWidget::startup()
     xlook = zlook = 0.0;
     ylook=1.0;
     testview=true;
+    statenumber=0;
 }
 
 void GLWidget::clear()
@@ -118,9 +118,8 @@ void GLWidget::paintGL()
    // glCallList( object );   no display list this version just make the cube
     makeDice( );
     makeGround();
-    if (!testview){
-        drawPoints();
-    }
+    drawPoints();
+
 
 
 }
@@ -155,16 +154,13 @@ void GLWidget::makeGround(){
 /* 2D */
 void GLWidget::resizeGL( int w, int h )
 {
-    qDebug() << "haha";
     glViewport( 0, 0, (GLint)w, (GLint)h );
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity();
-    qDebug() << "hahah";
     if(testview){
         glFrustum( -1.0, 1.0, -1.0, 1.0, 5.0, 1500.0 );
     }
     else{
-        qDebug()<<"ss";
         glOrtho(-4.0,4.0,-4,4,0.0,1000.0);
     }
     glMatrixMode( GL_MODELVIEW );
@@ -240,17 +236,12 @@ void GLWidget::initLight()
 
 GLuint GLWidget::makeDice( )
 {
-
-
     GLuint list;
     float w = 0.8;
 
-  //  list = glGenLists( 1 );
- //   glNewList( list, GL_COMPILE );   no display list this version
-
-
+    //  list = glGenLists( 1 );
+    //   glNewList( list, GL_COMPILE );   no display list this version
     // one
-
     drawFace(0,  w);
 
     // six
@@ -471,7 +462,10 @@ void GLWidget::drawPoints(){
     glPointSize(10.0f);
     glColor3f(1.0f, 0.0f, 0.0f);
     glBegin(GL_POINTS);
-    glVertex2f(mClickLocationX-283,mClickLocationY-252);
+    for(int i=0;i<pointlistX.size();i++){
+        glVertex3f(pointlistX[i],pointlistY[i],pointlistZ[i]);
+
+    }
     glEnd( );
 
 }
@@ -503,10 +497,26 @@ void GLWidget::mousePressEvent( QMouseEvent *e )
         }
     else{
         if(button == Qt::RightButton){
-            mClickLocationX = e->x();
-            mClickLocationY = e->y();
+          switch(statenumber){
+            case 1:
+              pointlistX.append((e->x()-283)/71.25);
+              pointlistY.append(0);
+              pointlistZ.append((e->y()-252)/62.5);
+              break;
+            case 2:
+              pointlistX.append((e->x()-283)/71.25);
+              pointlistY.append(-(e->y()-252)/62.5);
+              pointlistZ.append(0);
+              break;
+            case 3:
+              pointlistX.append(0);
+              pointlistY.append(-(e->y()-252)/62.5);
+              pointlistZ.append(-(e->x()-283)/71.25);
+              break;
+            default:
 
-
+              break;
+            }
         }
         updateGL();
     }
@@ -552,6 +562,7 @@ void GLWidget::mouseMoveEvent ( QMouseEvent *e )
     else{
 
 
+
         updateGL();
     }
     //update mouse click location
@@ -565,17 +576,20 @@ void GLWidget::setFilled(bool a)
     updateGL();
 }
 void GLWidget::topview(){
+    statenumber=1;
     testview=false;
     xlook = 0.0;
     ylook = 0.0;
-    zlook = 1.0;
+    zlook = -1.0;
     xfrom = 0.0;
     yfrom = 10.0;
     zfrom = 0.0;
     resizeGL(794,603);
     updateGL();
+
 }
 void GLWidget::frontview(){
+    statenumber=2;
     testview=false;
     xlook=0.0;
     ylook=1.0;
@@ -587,6 +601,7 @@ void GLWidget::frontview(){
     updateGL();
 }
 void GLWidget::rightview(){
+    statenumber=3;
     testview=false;
     xlook=0.0;
     ylook=1.0;
@@ -598,6 +613,7 @@ void GLWidget::rightview(){
     updateGL();
 }
 void GLWidget::presPective(){
+    statenumber=4;
     testview=true;
     xlook=0.0;
     ylook=1.0;
