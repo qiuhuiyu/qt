@@ -497,7 +497,6 @@ void GLWidget::mousePressEvent( QMouseEvent *e )
         }
     else{
         if(button == Qt::RightButton){
-             qDebug() << statenumber;
           switch(statenumber){
             case 1:
               pointlistX.append((e->x()-283)/71.25);
@@ -505,7 +504,6 @@ void GLWidget::mousePressEvent( QMouseEvent *e )
               pointlistZ.append((e->y()-252)/62.5);
               break;
             case 2:
-              qDebug() << "sa";
               pointlistX.append((e->x()-283)/71.25);
               pointlistY.append(-(e->y()-252)/62.5);
               pointlistZ.append(0);
@@ -562,6 +560,7 @@ void GLWidget::mouseMoveEvent ( QMouseEvent *e )
         }
     }
     else{
+        
 
 
         updateGL();

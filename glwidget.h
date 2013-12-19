@@ -14,6 +14,7 @@
 #include <QtOpenGL>
 #include <glu.h>
 #include "version.h"
+#include <QList>
 
 
 const int maxw=1024;
@@ -85,6 +86,10 @@ private:
     int mClickLocationY;
     double angleOfX,angleOfY,radius;
     int pointnumber;
+    QList<double> pointlistX;
+    QList<double> pointlistY;
+    QList<double> pointlistZ;
+    int statenumber;
 
     // Functions
     void redraw();
