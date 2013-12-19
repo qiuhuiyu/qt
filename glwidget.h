@@ -81,7 +81,7 @@ private:
     // for the cube
     double xangle, yangle, zangle, scale;
     QImage tex[6]; // one for each face
-    bool filled,testview;
+    bool filled,testview,movetest;
     int mClickLocationX;
     int mClickLocationY;
     double angleOfX,angleOfY,radius;

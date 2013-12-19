@@ -45,6 +45,7 @@ void GLWidget::startup()
     ylook=1.0;
     testview=true;
     statenumber=0;
+    movetest=false;
 }
 
 void GLWidget::clear()
@@ -496,19 +497,19 @@ void GLWidget::mousePressEvent( QMouseEvent *e )
         updateGL();
         }
     else{
-        if(button == Qt::RightButton){
-          switch(statenumber){
-            case 1:
-              pointlistX.append((e->x()-283)/71.25);
+        if(button == Qt::RightButton){//create points using right button
+          switch(statenumber){//differnet cases show different views respectively.
+            case 1://topview
+              pointlistX.append((e->x()-283)/71.25);//add x axis to the list
               pointlistY.append(0);
               pointlistZ.append((e->y()-252)/62.5);
               break;
-            case 2:
+            case 2://front view
               pointlistX.append((e->x()-283)/71.25);
               pointlistY.append(-(e->y()-252)/62.5);
               pointlistZ.append(0);
               break;
-            case 3:
+            case 3://right view
               pointlistX.append(0);
               pointlistY.append(-(e->y()-252)/62.5);
               pointlistZ.append(-(e->x()-283)/71.25);
@@ -517,11 +518,52 @@ void GLWidget::mousePressEvent( QMouseEvent *e )
 
               break;
             }
+
         }
+        else if(button == Qt::LeftButton){//use left button to move point
+            switch(statenumber){//test if the mouse clicked point is actually on the ground
+                case 1:
+                     for(int i=0;i<pointlistX.size();i++){//acceptable errors are fine
+                         if((pointlistX[i]-0.03)<=((e->x()-283)/71.25) &&((e->x()-283)/71.25)<=(pointlistX[i]+0.03) &&
+                                 (pointlistZ[i]-0.03)<=((e->y()-252)/62.5) &&((e->y()-252)/62.5)<=(pointlistZ[i]+0.03)){
+                             movetest=true;//true if the point is on the graph
+                         }
+                         else{
+                             movetest=false;
+                         }
+                     }
+                     break;
+
+                case 2:
+                     for(int i=0;i<pointlistX.size();i++){
+                         if((pointlistX[i]-0.03)<=((e->x()-283)/71.25)&&((e->x()-283)/71.25)<=(pointlistX[i]+0.03) &&
+                                 (pointlistY[i]-0.03)<=(-(e->y()-252)/62.5)&&(-(e->y()-252)/62.5)<=(pointlistY[i]+0.03)){
+                             movetest=true;
+                         }
+                         else{
+                               movetest=false;
+                           }
+                     }
+                     break;
+
+            case 3:
+                     for(int i=0;i<pointlistX.size();i++){
+                         if((pointlistY[i]-0.03)<= (-(e->y()-252)/62.5)&&(-(e->y()-252)/62.5)<=(pointlistY[i]+0.03) &&
+                                 (pointlistZ[i]-0.03)<=(-(e->x()-283)/71.25)&&(-(e->x()-283)/71.25)<=(pointlistZ[i]+0.03)){
+                             movetest=true;
+                        }
+                       else{
+                            movetest=false;
+                         }
+                     }
+                     break;
+                default:
+                    break;
+            }
         updateGL();
+       }
     }
 }
-
 void GLWidget::mouseReleaseEvent( QMouseEvent *e)
 {
 
@@ -624,3 +666,5 @@ void GLWidget::presPective(){
     resizeGL(794,603);
     updateGL();
 }
+
+
