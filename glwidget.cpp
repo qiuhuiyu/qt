@@ -46,6 +46,7 @@ void GLWidget::startup()
     testview=true;
     statenumber=0;
     movetest=false;
+    movepoint=0;
 }
 
 void GLWidget::clear()
@@ -524,12 +525,10 @@ void GLWidget::mousePressEvent( QMouseEvent *e )
             switch(statenumber){//test if the mouse clicked point is actually on the ground
                 case 1:
                      for(int i=0;i<pointlistX.size();i++){//acceptable errors are fine
-                         if((pointlistX[i]-0.03)<=((e->x()-283)/71.25) &&((e->x()-283)/71.25)<=(pointlistX[i]+0.03) &&
-                                 (pointlistZ[i]-0.03)<=((e->y()-252)/62.5) &&((e->y()-252)/62.5)<=(pointlistZ[i]+0.03)){
+                         if((pointlistX[i]-0.05)<=((e->x()-283)/71.25) &&((e->x()-283)/71.25)<=(pointlistX[i]+0.05) &&
+                                 (pointlistZ[i]-0.05)<=((e->y()-252)/62.5) &&((e->y()-252)/62.5)<=(pointlistZ[i]+0.05)){
                              movetest=true;//true if the point is on the graph
-                         }
-                         else{
-                             movetest=false;
+                             movepoint = i;
                          }
                      }
                      break;
@@ -539,10 +538,8 @@ void GLWidget::mousePressEvent( QMouseEvent *e )
                          if((pointlistX[i]-0.03)<=((e->x()-283)/71.25)&&((e->x()-283)/71.25)<=(pointlistX[i]+0.03) &&
                                  (pointlistY[i]-0.03)<=(-(e->y()-252)/62.5)&&(-(e->y()-252)/62.5)<=(pointlistY[i]+0.03)){
                              movetest=true;
+                             movepoint=i;
                          }
-                         else{
-                               movetest=false;
-                           }
                      }
                      break;
 
@@ -551,10 +548,8 @@ void GLWidget::mousePressEvent( QMouseEvent *e )
                          if((pointlistY[i]-0.03)<= (-(e->y()-252)/62.5)&&(-(e->y()-252)/62.5)<=(pointlistY[i]+0.03) &&
                                  (pointlistZ[i]-0.03)<=(-(e->x()-283)/71.25)&&(-(e->x()-283)/71.25)<=(pointlistZ[i]+0.03)){
                              movetest=true;
+                             movepoint=i;
                         }
-                       else{
-                            movetest=false;
-                         }
                      }
                      break;
                 default:
@@ -566,7 +561,10 @@ void GLWidget::mousePressEvent( QMouseEvent *e )
 }
 void GLWidget::mouseReleaseEvent( QMouseEvent *e)
 {
-
+    if(movetest)
+    {
+        movetest = false;
+    }
     updateGL();
 }
 
@@ -601,7 +599,31 @@ void GLWidget::mouseMoveEvent ( QMouseEvent *e )
 
         }
     }
-    else{
+    else if(button == Qt::LeftButton){
+        if(movetest){//the point can only move when the user clicked on the point.
+            switch(statenumber){//different views
+               case 1:
+                pointlistX[movepoint] = pointlistX[movepoint]+(((mouseX-283)/71.25)-pointlistX[movepoint]);
+                pointlistZ[movepoint] = pointlistZ[movepoint]+(((mouseY-252)/62.5)-pointlistZ[movepoint]);
+                updateGL();
+                break;
+
+            case 2:
+                pointlistX[movepoint] = pointlistX[movepoint]+(((mouseX-283)/71.25)-pointlistX[movepoint]);
+                pointlistY[movepoint] = pointlistY[movepoint]+((-(mouseY-252)/62.5)-pointlistY[movepoint]);
+                updateGL();
+                break;
+
+            case 3:
+                pointlistZ[movepoint] = pointlistZ[movepoint]+((-(mouseX-283)/71.25)-pointlistZ[movepoint]);
+                pointlistY[movepoint] = pointlistY[movepoint]+((-(mouseY-252)/62.5)-pointlistY[movepoint]);
+                updateGL();
+                break;
+
+               default:
+                break;
+            }
+        }
 
 
 

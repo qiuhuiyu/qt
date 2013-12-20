@@ -89,7 +89,7 @@ private:
     QList<double> pointlistX;
     QList<double> pointlistY;
     QList<double> pointlistZ;
-    int statenumber;
+    int statenumber,movepoint;
 
     // Functions
     void redraw();
